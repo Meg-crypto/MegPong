@@ -1,26 +1,18 @@
 import pygame
+from pygame.locals import K_UP, K_DOWN, K_w, K_s, QUIT
+
 from paddle import Paddle
-# Import pygame.locals for easier access to key coordinates
-from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_w,
-    K_s,
-    KEYDOWN,
-    QUIT,
-)
+from ball import Ball
 
 # Sizes
 SCREEN_SIZE = [500,500]
 SIDE_MARGIN = 30
 PADDLE_SIZE = (15, 100)
-
+BALL_SIZE = 10
 # Colours
 BACKGROUND_COLOUR = (200,0,90)
-BALL_COLOUR = (0,0,255)
+BALL_COLOUR = (255,255,255)
 PADDLE_COLOUR = (255,255,255)
-
 # Other settings
 PADDLE_SPEED = 4
 
@@ -33,16 +25,24 @@ paddle_B = Paddle(PADDLE_COLOUR, PADDLE_SIZE)
 paddle_B.rect.x = SCREEN_SIZE[0] - PADDLE_SIZE[0] - SIDE_MARGIN
 paddle_B.rect.y = 300
 
-# Add paddles to list of all sprites
+# Create the ball
+ball = Ball(BALL_COLOUR, BALL_SIZE)
+ball.rect.x = SCREEN_SIZE[0]/2
+ball.rect.y = SCREEN_SIZE[1]/2
+
+# Add paddles and ball to list of all sprites
 all_sprites_list = pygame.sprite.Group()
 all_sprites_list.add(paddle_A)
 all_sprites_list.add(paddle_B)
+all_sprites_list.add(ball)
 
+# Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
-# The clock will be used to control how fast the screen updates
-clock = pygame.time.Clock()
+clock = pygame.time.Clock() # The clock will be used to control how fast the screen updates
 
+
+# Runthe main loop of the game until window is closed
 running = True
 
 while running:
@@ -58,18 +58,22 @@ while running:
         paddle_B.up(PADDLE_SPEED)
     if pressed_keys[K_DOWN]:
         paddle_B.down(PADDLE_SPEED)
-
-    pygame.draw.circle(screen, BALL_COLOUR, (250, 250),30 )
     
+    # Update all the sprites and draw them
     all_sprites_list.update()
-    all_sprites_list.draw(screen)
+
+    for entity in all_sprites_list:
+        screen.blit(entity.image, entity.rect)
+    
+    pygame.display.flip()
+
 
     for event in pygame.event.get():
+        # Quit if user closes the window
         if event.type == pygame.QUIT:
             running = False
             print('bye!')
 
-    # --- Limit to 60 frames per second
+    # Limit to 60 frames per second
     clock.tick(60)
     
-    pygame.display.flip()
