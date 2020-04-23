@@ -69,14 +69,26 @@ while running:
     # Move the ball
     ball.rect.x += ball.velocity[0]
     ball.rect.y += ball.velocity[1]
+
     # Bounce the ball
     # Change y-direction if ball reaches top or bottom of screen
     if ball.rect.y <= 0 or ball.rect.y + (2*BALL_SIZE) >= SCREEN_SIZE[1]:
         ball.velocity[1] = -1 * ball.velocity[1]
-    # Change x-direction if ball is in line with paddle [TODO: score points instead]
-    if ball.rect.x <= SIDE_MARGIN + PADDLE_SIZE[0] \
-    or ball.rect.x >= SCREEN_SIZE[0] - (2*BALL_SIZE) - PADDLE_SIZE[0] - SIDE_MARGIN:
-        ball.velocity[0] = -1 * ball.velocity[0]
+
+    # If ball reaches beyond line of left paddle
+    if ball.rect.x <= SIDE_MARGIN + PADDLE_SIZE[0]:
+        if pygame.sprite.collide_rect(ball, paddle_A):
+            ball.velocity[0] = -1 * ball.velocity[0]
+        else:
+            print('A point for the right player!')
+            reset_ball()
+    # If ball reaches beyond line of right paddle
+    if ball.rect.x >= SCREEN_SIZE[0] - (2*BALL_SIZE) - PADDLE_SIZE[0] - SIDE_MARGIN:
+        if pygame.sprite.collide_rect(ball, paddle_B):
+            ball.velocity[0] = -1 * ball.velocity[0]
+        else:
+            print('A point for the left player!')
+            reset_ball()
     
     # Update all the sprites and draw them
     all_sprites_list.update()
