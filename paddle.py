@@ -12,6 +12,7 @@ class Paddle(pygame.sprite.Sprite):
 
         pygame.draw.rect(self.image, colour, [0,0,self.width,self.height])
         self.rect = self.image.get_rect()
+        self.velocity = [0,0]
 
     def up(self, distance):
         self.rect.y -= distance 
